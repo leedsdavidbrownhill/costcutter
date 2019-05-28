@@ -14,7 +14,9 @@ import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-public class ExampleSteps {
+import static junit.framework.TestCase.assertTrue;
+
+public class BranchSearchSteps {
 
     private WebDriver driver;
 
@@ -24,23 +26,27 @@ public class ExampleSteps {
         driver = new ChromeDriver();
     }
 
-    @Given("^I am on the Google search page$")
+    @Given("^I am on the Costcutter search page$")
     public void visitHomepage() {
-        driver.get("https:\\www.google.com");
+        driver.get("https://www.costcutter.co.uk/location-finder/");
     }
 
     @When("^I search for \"(.*)\"$")
     public void searchFor(String query) {
-        WebElement element = driver.findElement(By.name("q"));
+        WebElement element = driver.findElement(By.name("searchLocation"));
         element.sendKeys(query);
-        element.submit();
+        driver.findElement(By.xpath("//*[@id=\"findOptions\"]/div[1]/form/fieldset/button")).click();
     }
 
-    @Then("^the page title should start with \"(.*)\"$")
-    public void checkTitle(String titleStartsWith) {
-        new WebDriverWait(driver,10L).until((ExpectedCondition<Boolean>) d -> d.getTitle().toLowerCase().startsWith(titleStartsWith));
-    }
+    @Then("^the page should contain \"(.*)\"$")
+    public void checkTitle(String query) {
 
+        //*[@id="totals"]/div/h3/span
+        Boolean found =  driver.findElement(By.xpath("//*[contains(text(), query)]")).isDisplayed();
+        //WebElement element = driver.findElement(By.xpath("//*[@id=\"totals\"]/div/h3/span"));
+        assertTrue(found);
+
+    }
     @After
     public void closeBrowser() {
         driver.quit();
